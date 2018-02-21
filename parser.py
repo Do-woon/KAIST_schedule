@@ -6,7 +6,7 @@ from bs4.element import NavigableString
 import re
 from datetime import datetime
 
-from crawl_exception import *
+from schedule_crawler.crawl_exception import *
 
 
 def ValidYearRange(year):
@@ -125,6 +125,7 @@ def GetParsedData(year):
         (date_start, date_end) = ParseDateInfo(date_info, year)
             
         for desc in desc_list:
+            desc = desc.strip().strip('-')
             parsed_data.append([date_start,date_end,desc])
 
     return parsed_data

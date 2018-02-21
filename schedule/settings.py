@@ -79,16 +79,16 @@ WSGI_APPLICATION = 'schedule.wsgi.application'
 
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.sqlite3',
-        'ENGINE': 'django.db.backends.mysql',
-        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'OPTIONS': {
-            'read_default_file': '/etc/mysql/my.cnf',
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        #'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        #'OPTIONS': {
+        #    'read_default_file': '/etc/mysql/my.cnf',
+        #},
     }
 }
 
-DATABASE_OPTIONS = {'cahrset': 'utf8'}
+#DATABASE_OPTIONS = {'cahrset': 'utf8'}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
