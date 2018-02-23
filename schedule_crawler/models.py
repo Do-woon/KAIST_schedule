@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -16,12 +15,14 @@ def dateEndValidator(value):
 
 class ScheduleInfo(models.Model):
     name = models.CharField(max_length=300)
-    #description = models.CharField(max_length=600, null=True, blank=True)
     dateStart = models.DateTimeField(validators=[dateStartValidator,])
     dateEnd = models.DateTimeField(validators=[dateEndValidator,])
     
-
     def __str__(self):
-        return self.name
+        return self.dateStart.strftime("[%Y-%m-%d]") + "~" + self.dateStart.strftime("[%Y-%m-%d]") + " : " + self.name
+    
+    def __eq__(self, other):
+        return self.name==other.name and self.dateStart==other.dateStart and self.dateEnd==other.dateEnd
+
 
     

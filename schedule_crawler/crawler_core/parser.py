@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
-
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 import re
 from datetime import datetime
+import pytz
 
-from schedule_crawler.crawl_exception import *
+from .crawl_exception import *
 
 
 def ValidYearRange(year):
@@ -103,6 +102,8 @@ def ParseDateInfo(date_info, year):
                 date_start = datetime(year, month_info, day_info)
             else:
                 date_end = datetime(year, month_info, day_info)
+    date_start = pytz.timezone("Asia/Seoul").localize(date_start)
+    date_end = pytz.timezone("Asia/Seoul").localize(date_end)
 
     return (date_start, date_end)
 
@@ -125,7 +126,7 @@ def GetParsedData(year):
         (date_start, date_end) = ParseDateInfo(date_info, year)
             
         for desc in desc_list:
-            desc = desc.strip().strip('-')
+            desc = desc.strip().strip('-').strip()
             parsed_data.append([date_start,date_end,desc])
 
     return parsed_data
