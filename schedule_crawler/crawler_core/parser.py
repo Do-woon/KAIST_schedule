@@ -2,8 +2,12 @@ import requests
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 import re
-from datetime import datetime
 import pytz
+from datetime import datetime
+
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE","schedule.settings")
+from django.utils import timezone
 
 from .crawl_exception import *
 
@@ -76,7 +80,7 @@ def ParseDateInfo(date_info, year):
         except ValueError:
             raise PageSchemeException("unable to change date info : {0} -> {1}, {2}".format(date_info, result[0], result[1]))
 
-        date_start = datetime(year, month_info, day_info)
+        date_start = timezone.make_aware(datetime(year, month_info, day_info))
         date_end = date_start
 
     else:
@@ -99,11 +103,9 @@ def ParseDateInfo(date_info, year):
                 raise PageSchemeException("unable to change date info : {0} -> {1}, {2}".format(date_info, result[0], result[1]))
 
             if i==0:
-                date_start = datetime(year, month_info, day_info)
+                date_start = timezone.make_aware(datetime(year, month_info, day_info))
             else:
-                date_end = datetime(year, month_info, day_info)
-    date_start = pytz.timezone("Asia/Seoul").localize(date_start)
-    date_end = pytz.timezone("Asia/Seoul").localize(date_end)
+                date_end = timezone.make_aware(datetime(year, month_info, day_info))
 
     return (date_start, date_end)
 
