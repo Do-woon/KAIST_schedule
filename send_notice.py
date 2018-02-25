@@ -9,7 +9,7 @@ from django.utils import timezone
 upcommings = ScheduleInfo.objects.all()
 #filter today's schedules
 todays = [schedule for schedule in upcommings if schedule.dateStart.date() == timezone.now().date()]
-with open('log/today_schedule','a') as f:
+with open('log/today_schedule.log','a') as f:
     f.write(timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + "\n" + "\n".join([schedule.name for schedule in todays]))
     f.write('\n')
 
