@@ -19,7 +19,7 @@ class ScheduleInfo(models.Model):
     dateEnd = models.DateTimeField(validators=[dateEndValidator,])
     
     def __str__(self):
-        return timezone.localtime(self.dateStart).strftime("[%Y-%m-%d]") + "~" + timezone.localtime(self.dateStart).strftime("[%Y-%m-%d]") + " " + self.name
+        return timezone.localtime(self.dateStart).strftime("[%Y-%m-%d]") + "~" + timezone.localtime(self.dateEnd).strftime("[%Y-%m-%d]") + " " + self.name
     
     def __eq__(self, other):
         return self.name==other.name and self.dateStart==other.dateStart and self.dateEnd==other.dateEnd
