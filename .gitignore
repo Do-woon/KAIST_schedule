@@ -2,6 +2,7 @@
 *~
 __pychache__
 myvenv
+pyvenv
 /static
 .DS_Store
 *.swp
