@@ -24,7 +24,7 @@ with open('/home/DoWoonKim/KAIST_schedule/token','r') as f:
 bot = telegram.Bot(token=my_token)
 
 try:
-    updates = bot.getUpdates()
+    updates = bot.getUpdates(timeout=5)
 except telegram.error.TimedOut:
     with open('/home/DoWoonKim/KAIST_schedule/log/error.log','a') as f:
         f.write('TimedOut Error : connection failure' + timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]"))
