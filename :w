@@ -106,18 +106,14 @@ def ModifyActiveStatus(bot):
 
 
 def assert_msg_func_param(bot, user_list):
-    assert( type(user_list) == list )
-
-    if len(user_list) == 0:
-        return
-
-    assert( len(user_list[0]) == 3 )
-    assert( type(user_list[0][0]) == int )
-    assert( type(user_list[0][1]) == str and type(newly_added[2]) == str )
+    assert( type(newly_added) == list )
+    assert( len(newly_added) == 3 )
+    assert( type(newly_added[0]) == int )
+    assert( type(newly_added[1]) == str and type(newly_added[2]) == str )
     assert( type(bot) == telegram.bot.Bot )
 
 def SendWelcomeMsg(bot, newly_added):
-    #assert_msg_func_param( bot, newly_added )
+    assert_msg_func_param( bot, newly_added )
 
     for chat_id, f_name, l_name in newly_added:
         try:
@@ -127,20 +123,20 @@ def SendWelcomeMsg(bot, newly_added):
             continue
 
 
-def SendDisabledNotice(bot, disabled):
-    #assert_msg_func_param( bot, newly_disabled )
+def SendDisabledNotice(bot, newly_disabled):
+    assert_msg_func_param( bot, newly_disabled )
 
-    for chat_id, f_name, l_name in disabled:
+    for chat_id, f_name, l_name in newly_added:
         try:
             bot.sendMessage(chat_id=chat_id, text="{0} {1}, you are successfully unregisterd.".format(f_name, l_name))
         except telegram.error.TimedOut:
             continue
 
 
-def SendEnabledNotice(bot, enabled):
-    #assert_msg_func_param( bot, newly_enabled )
+def SendEnabledNotice(bot, newly_enabled):
+    assert_msg_func_param( bot, newly_enabled )
 
-    for chat_id, f_name, l_name in enabled:
+    for chat_id, f_name, l_name in newly_added:
         try:
             bot.sendMessage(chat_id=chat_id, text="{0} {1}, you are successfully registerd.".format(f_name, l_name))
         except telegram.error.TimedOut:
@@ -151,16 +147,17 @@ def SendScheduleNotice(bot, today_schedules):
 
     receivers = Client.objects.filter(alarm_active=True)
     with open('log/send_to.log','a') as f:
-        f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : {0} \n\n".format(', '.join([str(p.chat_id) for p in receivers])))
+        f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : {0} \n\n".format(', '.join([p.chat_id for p in receivers])))
 
 
     for client in receivers:
-        for schedule in today_schedules:
-            try:
-                bot.sendMessage(chat_id=client.chat_id, text=schedule.__str__())
-            except telegram.error.TimedOut:
-                with open('log/error.log','a') as f:
-                    f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : TimeOut Error. Message sending failure \n\n" ) 
+        try:
+            for schedule in today_schedules:
+                try:
+                    bot.sendMessage(chat_id=client.chat_id, text=schedule.__str__())
+                except telegram.error.TimedOut:
+                    with open('log/error.log','a') as f:
+                        f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : TimeOut Error. Message sending failure \n\n")
 
 
 
@@ -182,11 +179,8 @@ with open('token','r') as f:
 bot = telegram.Bot(token=my_token)
         
 
-new_disabled, new_enabled, new_added = ModifyActiveStatus(bot)
-print( new_disabled, 'are disabled')
-print( new_enabled, 'are enabled')
-print( new_added, 'are added')
-SendDisabledNotice(bot, new_disabled)
-SendEnabledNotice(bot, new_enabled)
-SendWelcomeMsg(bot, new_added)
+newly_disabled, newly_enabled, newly_added = ModifyActiveStatus(bot)
+SendDisabledNotice(bot, newly_disabled)
+SendEnabledNotice(bot, newly_enabled)
+SendWelcomeMsg(bot, newly_added)
 SendScheduleNotice(bot, todays)

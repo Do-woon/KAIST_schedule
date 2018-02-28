@@ -12,5 +12,15 @@ class Client(models.Model):
     def __str__(self):
         return str(self.chat_id) + " : " + self.user.get_full_name()
 
+    def disable_alarm(self):
+        self.alarm_active = False
+        self.save()
+
+    def enable_alarm(self):
+        self.alarm_active = True
+        self.save()
+
+    def is_active(self):
+        return self.alarm_active
 
 
