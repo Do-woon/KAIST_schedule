@@ -161,6 +161,10 @@ def SendScheduleNotice(bot, today_schedules):
             except telegram.error.TimedOut:
                 with open('log/error.log','a') as f:
                     f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : TimeOut Error. Message sending failure \n\n" ) 
+            except telegram.error.Unauthorized:
+                with open('log/error.log','a') as f:
+                    f.write(  timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : User Unauthorized Error. Message sending failure \n\n" ) 
+
 
 
 
