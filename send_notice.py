@@ -45,11 +45,13 @@ def GetActiveStatus(updates):
 def ModifyActiveStatus(bot):
     assert( type(bot) == telegram.bot.Bot )
     
-    try:
-        updates = bot.getUpdates(timeout=5)
-    except telegram.error.TimedOut:
-        with open('log/error.log','a') as f:
-            f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : TimeOut Error. Update failure \n\n")
+    for i in range(3):
+        try:
+            updates = bot.getUpdates(timeout=5)
+            break
+        except telegram.error.TimedOut:
+            with open('log/error.log','a') as f:
+                f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : TimeOut Error. Update failure \n\n")
 
     disabled, enabled = GetActiveStatus(updates)
 
