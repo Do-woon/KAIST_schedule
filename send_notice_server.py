@@ -51,7 +51,7 @@ def ModifyActiveStatus(bot):
             break
         except telegram.error.TimedOut:
             with open('/home/DoWoonKim/KAIST_schedule/log/error.log','a') as f:
-                f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : TimeOut Error. Update failure \n\n")
+                f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : TimeOut Error. Update failure " + client.__str__() + " \n\n")
 
     disabled, enabled = GetActiveStatus(updates)
 
