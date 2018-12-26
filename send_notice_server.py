@@ -50,7 +50,7 @@ def ModifyActiveStatus(bot):
             updates = bot.getUpdates(timeout=5)
             break
         except telegram.error.TimedOut:
-            with open('/home/DoWoonKim/KAIS_schedule/log/error.log','a') as f:
+            with open('/home/DoWoonKim/KAIST_schedule/log/error.log','a') as f:
                 f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : TimeOut Error. Update failure \n\n")
 
     disabled, enabled = GetActiveStatus(updates)
@@ -65,7 +65,7 @@ def ModifyActiveStatus(bot):
 
         #if not found in client
         if not target:
-            with open('/home/DoWoonKim/KAIS_schedule/log/error.log','a') as f:
+            with open('/home/DoWoonKim/KAIST_schedule/log/error.log','a') as f:
                 f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : {0} is not found in Client \n\n".format(chat_id))
             continue
         
@@ -74,7 +74,7 @@ def ModifyActiveStatus(bot):
             continue #if alarm is already disabled, continue
 
         target[0].disable_alarm()
-        with open('/home/DoWoonKim/KAIS_schedule/log/disabled.log','a') as f:
+        with open('/home/DoWoonKim/KAIST_schedule/log/disabled.log','a') as f:
             f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : {0} is deactivated \n".format(chat_id) )
         newly_disabled.append( (chat_id, f_name, l_name) )
 
@@ -90,7 +90,7 @@ def ModifyActiveStatus(bot):
             new_client = Client( user = new_user, chat_id = chat_id )
             new_client.save()
             
-            with open('/home/DoWoonKim/KAIS_schedule/log/client_added.log','a') as f:
+            with open('/home/DoWoonKim/KAIST_schedule/log/client_added.log','a') as f:
                 f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : {0} is added \n".format(chat_id) )
             newly_added.append( (chat_id, f_name, l_name) )
 
@@ -99,7 +99,7 @@ def ModifyActiveStatus(bot):
             if target[0].is_active():
                 continue #if alarm is already abled, continue
             target[0].enable_alarm()
-            with open('/home/DoWoonKim/KAIS_schedule/log/enabled.log','a') as f:
+            with open('/home/DoWoonKim/KAIST_schedule/log/enabled.log','a') as f:
                 f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : {0} is enabled \n".format(chat_id) )
             newly_enabled.append( (chat_id, f_name, l_name) )
 
@@ -152,7 +152,7 @@ def SendScheduleNotice(bot, today_schedules):
     assert( type(bot) == telegram.bot.Bot )
 
     receivers = Client.objects.filter(alarm_active=True)
-    with open('/home/DoWoonKim/KAIS_schedule/log/send_to.log','a') as f:
+    with open('/home/DoWoonKim/KAIST_schedule/log/send_to.log','a') as f:
         f.write( "\n" + timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : " )
 
 
@@ -160,13 +160,13 @@ def SendScheduleNotice(bot, today_schedules):
         for schedule in today_schedules:
             try:
                 bot.sendMessage(chat_id=client.chat_id, text=schedule.__str__())
-                with open('/home/DoWoonKim/KAIS_schedule/log/send_to.log', 'a') as f:
+                with open('/home/DoWoonKim/KAIST_schedule/log/send_to.log', 'a') as f:
                     f.write( " " + str(client.chat_id) + " " )
             except telegram.error.TimedOut:
-                with open('/home/DoWoonKim/KAIS_schedule/log/error.log','a') as f:
+                with open('/home/DoWoonKim/KAIST_schedule/log/error.log','a') as f:
                     f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : TimeOut Error. Message sending failure \n\n" ) 
             except telegram.error.Unauthorized:
-                with open('/home/DoWoonKim/KAIS_schedule/log/error.log','a') as f:
+                with open('/home/DoWoonKim/KAIST_schedule/log/error.log','a') as f:
                     f.write(  timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : User Unauthorized Error. Message sending failure "+ client.__str__() + "\n\n" ) 
 
 
@@ -179,12 +179,12 @@ def SendScheduleNotice(bot, today_schedules):
 upcommings = ScheduleInfo.objects.all()
 #filter today's schedules
 todays = [schedule for schedule in upcommings if timezone.localtime(schedule.dateStart).date() == timezone.localtime().date()]
-with open('/home/DoWoonKim/KAIS_schedule/log/today_schedule.log','a') as f:
+with open('/home/DoWoonKim/KAIST_schedule/log/today_schedule.log','a') as f:
     f.write(timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + "\n" + "\n".join([schedule.name for schedule in todays]))
     f.write('\n')
 
 
-with open('/home/DoWoonKim/KAIS_schedule/token','r') as f:
+with open('/home/DoWoonKim/KAIST_schedule/token','r') as f:
     my_token = f.read().strip()
 
 bot = telegram.Bot(token=my_token)
