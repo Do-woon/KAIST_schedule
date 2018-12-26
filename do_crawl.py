@@ -7,8 +7,7 @@ django.setup()
 from django.utils import timezone
 from schedule_crawler.models import ScheduleInfo
 
-
-parsed_data = GetParsedData(timezone.now().year)
+parsed_data = GetParsedData(timezone.now().year+1)
 db_saved_schedule = ScheduleInfo.objects.all()
 
 for (dateStart, dateEnd, description) in parsed_data:
