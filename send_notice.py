@@ -153,13 +153,15 @@ def SendScheduleNotice(bot, today_schedules):
 
     receivers = Client.objects.filter(alarm_active=True)
     with open('log/send_to.log','a') as f:
-        f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : {0} \n\n".format(', '.join([str(p.chat_id) for p in receivers])))
+        f.write( "\n" + timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : " )
 
 
     for client in receivers:
         for schedule in today_schedules:
             try:
                 bot.sendMessage(chat_id=client.chat_id, text=schedule.__str__())
+                with open('log/send_to.log', 'a') as f:
+                    f.write( " " + str(client.chat_id) + " " )
             except telegram.error.TimedOut:
                 with open('log/error.log','a') as f:
                     f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : TimeOut Error. Message sending failure \n\n" ) 
