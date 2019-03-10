@@ -83,8 +83,14 @@ def ModifyActiveStatus(bot):
     for chat_id, f_name, l_name in enabled:
         target = Client.objects.filter(chat_id=chat_id)
         if len(target) == 0:
+            print("New client found : " + str(chat_id))
             new_password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
-            new_user = User( username = l_name + f_name, first_name = f_name, last_name = l_name, password = new_password )
+            try:
+                new_user = User( username = l_name + f_name, first_name = f_name, last_name = l_name, password = new_password )
+            except TypeError:
+                with open('/home/DoWoonKim/KAIST_schedule/log/error.log','a') as f:
+                    f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : failed to register new user - {0}, {1}, {2} \n".format(chat_id, str(f_name), str(l_name)) )
+                continue
             new_user.save()
 
             new_client = Client( user = new_user, chat_id = chat_id )
