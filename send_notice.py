@@ -90,7 +90,7 @@ def ModifyActiveStatus(bot):
             except TypeError:
                 with open('log/error.log','a') as f:
                     f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : new user name is invalid - {0}, {1}, {2} \n".format(chat_id, str(f_name), str(l_name)) )
-                new_user = User( username = l_name + f_name, first_name = f_name, last_name = l_name, password = new_password )
+                new_user = User( username = str(l_name) + str(f_name), first_name = str(f_name), last_name = str(l_name), password = new_password )
 
             new_user.save()
 
