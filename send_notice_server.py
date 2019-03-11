@@ -89,8 +89,8 @@ def ModifyActiveStatus(bot):
                 new_user = User( username = l_name + f_name, first_name = f_name, last_name = l_name, password = new_password )
             except TypeError:
                 with open('/home/DoWoonKim/KAIST_schedule/log/error.log','a') as f:
-                    f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : failed to register new user - {0}, {1}, {2} \n".format(chat_id, str(f_name), str(l_name)) )
-                continue
+                    f.write( timezone.localtime().strftime("[%Y-%m-%d-%H:%M:%S]") + " : new user name is invalid - {0}, {1}, {2} \n".format(chat_id, str(f_name), str(l_name)) )
+                new_user = User( username = l_name + f_name, first_name = f_name, last_name = l_name, password = new_password )
             new_user.save()
 
             new_client = Client( user = new_user, chat_id = chat_id )
