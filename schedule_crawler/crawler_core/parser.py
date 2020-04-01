@@ -25,29 +25,29 @@ def GetRawData( year ):
     elif not ValidYearRange(year):
         raise ArgumentError("year is not in valid range")
 
-    target_url = 'https://www.kaist.ac.kr/_prog/adcal/index.php?dvs_cd=1&site_dvs_cd=en&menu_dvs_cd=03030101&site_dvs=&stt_y=' + str(year)
+    target_url = 'http://www.kaist.edu/en/html/edu/03100101.html'
 
     req = requests.get(target_url)
     html = req.text
     soup = BeautifulSoup(html, 'html.parser')
 
 
-    year_sch = soup.find_all(class_=re.compile("mnt\d+"))
-    if len(year_sch) != 14:
-        raise PageSchemeException("number of month entry is not 14")
-
-    year_sch = year_sch[0:12] #only take those of current year
+    year_sch = soup.select("div#txt > div > div > div > table[class='schedule_table']")
+    if len(year_sch) != 12:
+        raise PageSchemeException("number of month entry is not 12")
 
     raw_data = []
     for month_sch in year_sch:
-        month_sch = month_sch.parent.parent.select('div > ul > li')
         if len(month_sch) == 0:
             raise PageSchemeException("failed to find monthly schedule")
 
         for time_slot in month_sch:
+            if '<td>' not in time_slot.__str__():
+                continue
+
             try:
-                date_info = time_slot.contents[0].text
-                indv_sch = time_slot.contents[1].contents
+                date_info = str(time_slot.contents[1].text)
+                indv_sch = time_slot.contents[3].contents
             except (AttributeError, IndexError):
                 raise PageSchemeException("failed to find each time slot")
 
@@ -67,13 +67,14 @@ def ParseDateInfo(date_info, year):
         raise ArgumentError("Parsing date info failed : argument is not string : {0}".format(date_info))
 
     if "~" not in date_info: #one-day schedule
-        date_pattern = re.compile("\d{,2}\s?\.\s?\d{,2}")
+        date_pattern = re.compile("\d{,2}\D\d{,2}\([a-zA-Z]{3}\)")
         result = date_pattern.findall(date_info)
         if len(result) != 1:
             raise PageSchemeException("date format is not valid : {0}, {1}".format(date_info, result))
-        result = result[0].split(".")
+        result = result[0].split("(")[0].split('-')
         if len(result) != 2:
             raise PageSchemeException("date format is not valid : {0}, {1}".format(date_info, result))
+        
         try:
             month_info = int(result[0].strip())
             day_info = int(result[1].strip())
@@ -84,16 +85,16 @@ def ParseDateInfo(date_info, year):
         date_end = date_start
 
     else:
-        date_info = date_info.split("~")
-        if len(date_info) != 2:
+        if len(date_info.split("~")) != 2:
             raise PageSchemeException("date format is not valid : {0}".format(date_info))
-        date_pattern = re.compile("\d{,2}\s?\.\s?\d{,2}")
+        date_pattern = re.compile("\d{,2}\D\d{,2}\([a-zA-Z]{3}\)")
+        date_info = date_info.split("~")
 
         for i in range(2):
             result = date_pattern.findall(date_info[i])
             if len(result) != 1:
                 raise PageSchemeException("date format is not valid : {0}, {1}".format(date_info,result))
-            result = result[0].split(".")
+            result = result[0].split("(")[0].split('-')
             if len(result) != 2:
                 raise PageSchemeException("date format is not valid : {0}, {1}".format(date_info,result)) 
             try:
